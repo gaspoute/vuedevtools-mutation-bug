@@ -1,0 +1,12 @@
+{
+  "name": "vuedevtools-mutation-bug",
+  "version": "1.0.0",
+  "description": "Tiny example to reproduce a bug when time travelling to a mutation with vue-devtools",
+  "scripts": {
+	  "start": "serve"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "serve": "6.2.0"
+  }
+}

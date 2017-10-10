@@ -1,0 +1,97 @@
+<html>
+    <head>
+        <script src="https://unpkg.com/vue@2.4.4/dist/vue.js"></script>
+        <script src="https://unpkg.com/vuex@2.4.1/dist/vuex.js"></script>
+    </head>
+    <body>
+        <div id="app">
+            <p v-if="loading">
+                Loading ...
+            </p>
+            <ul v-else>
+                <li v-for="fruit in fruits" :key="fruit.id" @click="toggle(fruit)">
+                    {{fruit.name}}
+                    <template v-if="selectedFruit === fruit">
+                        (selected)
+                    </template>
+                    <strong>selected ?</strong> {{selectedFruit === fruit}}
+                    <strong>really ?</strong> {{$store.state.selected === fruit}}
+                    <!-- {{selectedFruit === fruit ? '(selected)' : ''}} -->
+                </li>
+            </ul>
+            <button @click="reload">
+                Reload
+            </button>
+        </div>
+        <script type="text/javascript">
+            const fruits = [{id: 1, name: 'banana'}, {id: 2, name: 'apple'}, {id: 3, name: 'orange'}];
+
+            // Vue.use(Vuex);
+
+            const store = new Vuex.Store({
+                state: {
+                    loading: false,
+                    fruits: [],
+                    selected: null
+                },
+                mutations: {
+                    setFruits(state, payload) {
+                        state.fruits = payload.fruits;
+                    },
+                    setSelectedFruit(state, payload) {
+                        state.selected = payload.fruit;
+                    },
+                    setLoading(state, payload) {
+                        state.loading = payload.loading;
+                    }
+                },
+                actions: {
+                    loadFruits({commit}) {
+                        commit('setLoading', {loading: true});
+                        return new Promise(resolve => {
+                            setTimeout(() => {
+                                commit('setFruits', {fruits});
+                                commit('setLoading', {loading: false});
+                            }, 2000);
+                        });
+                    }
+                }
+            });
+
+
+            const app = new Vue({
+                store,
+                computed: {
+                    loading() {
+                        return this.$store.state.loading;
+                    },
+                    fruits() {
+                        return this.$store.state.fruits;
+                    },
+                    selectedFruit() {
+                        console.log('selected fruit', this.$store.state.selected);
+                        return this.$store.state.selected;
+                    }
+                },
+                methods: {
+                    toggle(fruit) {
+                        if (this.selectedFruit === fruit) {
+                            this.$store.commit('setSelectedFruit', {fruit: null});
+                        } else {
+                            this.$store.commit('setSelectedFruit', {fruit});
+                        }
+                    },
+                    reload() {
+                        this.$store.dispatch('loadFruits');
+                    }
+                },
+                mounted() {
+                    setTimeout(() => {
+                        this.reload();
+                    }, 2000);
+                }
+            });
+            app.$mount('#app');
+        </script>
+    </body>
+</html>
