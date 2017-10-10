@@ -1,0 +1,61 @@
+<html>
+    <head>
+        <script src="https://unpkg.com/vue@2.4.4/dist/vue.js"></script>
+        <script src="https://unpkg.com/vuex@2.4.1/dist/vuex.js"></script>
+    </head>
+    <body>
+        <div id="app">
+            <h1 @click="toggle">{{fruit.name}}</h1>
+            <strong>selected ? </strong> {{selectedFruit === fruit ? 'yes' : 'no'}}
+            <button @click="reload">
+                Reload
+            </button>
+        </div>
+        <script type="text/javascript">
+            const fruits = [{id: 1, name: 'banana'}, {id: 2, name: 'apple'}, {id: 3, name: 'orange'}];
+
+            // Vue.use(Vuex);
+
+            let which = 1;
+            const store = new Vuex.Store({
+                state: {
+                    fruit: fruits[0],
+                    selectedFruit: null
+                },
+                mutations: {
+                    setFruit(state, payload) {
+                        state.fruit = payload.fruit;
+                    },
+                    setSelectedFruit(state, payload) {
+                        state.selectedFruit = payload.fruit;
+                    },
+                    toggle(state) {
+                        state.selectedFruit = state.fruit === state.selectedFruit ? null : state.fruit;
+                    }
+                }
+            });
+
+            const app = new Vue({
+                store,
+                computed: {
+                    fruit() {
+                        return this.$store.state.fruit;
+                    },
+                    selectedFruit() {
+                        return this.$store.state.selectedFruit;
+                    }
+                },
+                methods: {
+                    toggle() {
+                        this.$store.commit('toggle');
+                    },
+                    reload() {
+                        this.$store.commit('setFruit', {fruit: fruits[which]});
+                        which = (which + 1) % fruits.length;
+                    }
+                }
+            });
+            app.$mount('#app');
+        </script>
+    </body>
+</html>
