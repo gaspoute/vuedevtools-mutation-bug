@@ -6,7 +6,8 @@
     <body>
         <div id="app">
             <h1 @click="toggle">{{fruit.name}}</h1>
-            <strong>selected ? </strong> {{selectedFruit === fruit ? 'yes' : 'no'}}
+            <!-- <strong>selected ?</strong> {{selectedFruit === fruit ? 'yes' : 'no'}} -->
+            <strong>selected ?</strong> {{selected ? 'yes' : 'no'}}
             <button @click="reload">
                 Reload
             </button>
@@ -21,6 +22,11 @@
                 state: {
                     fruit: fruits[0],
                     selectedFruit: null
+                },
+                getters: {
+                    selected(state) {
+                        return state.selectedFruit === state.fruit;
+                    }
                 },
                 mutations: {
                     setFruit(state, payload) {
@@ -43,6 +49,9 @@
                     },
                     selectedFruit() {
                         return this.$store.state.selectedFruit;
+                    },
+                    selected() {
+                        return this.$store.getters.selected;
                     }
                 },
                 methods: {
